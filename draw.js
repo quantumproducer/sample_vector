@@ -5,17 +5,6 @@ Thing.prototype.draw = function(client, context) {
 	context.fill();
 };
 
-Laser.prototype.draw = function(client, context) {
-	context.lineWidth = Laser.lineWidth;
-	context.beginPath();
-	context.moveTo(this.x - this.mx * 2, this.y - this.my * 2);
-	context.lineTo(this.x + this.mx * 2, this.y + this.my * 2);
-	context.strokeStyle = this.teamColor;
-  context.closePath();
-	context.stroke();
-}
-
-
 Title.prototype.draw = function(client, context) {
 	context.font = '23pt Courier New';
 	var style = context.fillStyle;

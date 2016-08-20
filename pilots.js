@@ -9,7 +9,7 @@ class Ship extends Thing {
 		this.r = 65;
 		var controls = new ShipControls({'ship' : this});
 		this.install('controls', controls);
-		var inertia = new Inertia({'mass' : 10, 'theta' : 130, 'magnitude' : 30, 'thing' : this});
+		var inertia = new Inertia({'mass' : 10, 'theta' : 130, 'magnitude' : 0.3, 'thing' : this});
 		this.install('inertia', inertia);
 		this.install('thruster', new Thruster({'ship' : this}));
 		this.install('turner', new Turner({'ship' : this}));
@@ -55,6 +55,15 @@ class ShipControls extends Component {
 		var t1 = this.ship.r; //rotation, the theta the ship is facing
 		var m1 = this.ship.grab('thruster').power;
 
+		//Without this if statement, the ship will move towards top right
+		//Even when thrust is not active!
+		if (m1 > -0.1 && m1 < 0.1) {
+			return;
+		}
+		console.log(m1);
+		//m1 is 0 when gamepad button is not active.
+		//m1 is 0.4 when the gamepad thrust button is active.
+
 		var inertia = this.ship.grab('inertia');
 		var t2 = inertia.theta;
 		var m2 = inertia.magnitude;
@@ -66,67 +75,59 @@ class ShipControls extends Component {
 		var kimVX = (m2 * Math.cos(t2 * Math.PI / 180));
 		var kimVY = (m2 * Math.sin(t2 * Math.PI / 180));
 
-		// console.log(kimVX);
-		// console.log(kimVY);
+		console.log("Inertia Vector.x" + kimVX);
+		console.log("Inertia Vector.y" + kimVY);
 		// return;
 
 		var noahVX = (m1 * Math.cos(t1 * Math.PI / 180));
 		var noahVY = (m1 * Math.sin(t1 * Math.PI / 180));
 
-		// console.log(noahVX);
-		// console.log(noahVY);
+		console.log("Thrust Vector.x:" + noahVX);
+		console.log("Thrust Vector.y:" + noahVY);
 		// return;
 
 		var resultVX = kimVX + noahVX;
 		var resultVY = kimVY + noahVY;
 
-		// console.log(resultVX);
-		// console.log(resultVY);
+		console.log("Resulting Vector.x" + resultVX);
+		console.log("Resulting Vector.y" + resultVY);
 		// return;
 
-		var resultMagnitude = Math.sqrt(resultVX * resultVX + resultVY * resultVY);
-		// console.log(resultMagnitude);
+		//So far the console.logs match within 2 decimal places of the example
+		//
 
-		var resultTheta = Math.atan( Math.abs(resultVY) / Math.abs(resultVX) );
+		var c = resultVX * resultVX + resultVY * resultVY;
+		console.log(c); //Expected to equal ~0.3522 since the example is 3522.25
+		//and magnitudes are scaled down by a factor of 100
+		// return;
+		if (c != 0) {
+
+
+		var resultMagnitude = Math.sqrt(c);
+		console.log("Resulting vector magnitude" + resultMagnitude);
+		// return;
+
+		var resultTheta = (Math.atan( (resultVY) / (resultVX) )) * 180 / Math.PI ;
 		console.log(resultTheta);
+		// return;
 
 		inertia.magnitude = resultMagnitude;
 		inertia.theta = resultTheta;
-		return;
-
-		// console.log(kimVX);
-		// console.log(noahVX);
-		// return;
-
-		console.log(resultVectorX);
-		// console.log(resultVectorY);
-
-		var c = (resultVectorX * resultVectorX) + (resultVectorY + resultVectorY);
-		var resultMagnitude = Math.sqrt(c);
-		
-		// console.log(resultMagnitude);
-
-		var atan = Math.atan(resultVectorY / resultVectorX);
-		// console.log(atan);
-		// var resultTheta = atan * 180 / Math.PI;
-
-		// console.log(resultTheta);
-
-		inertia.magnitude = resultMagnitude;
-		inertia.theta = atan;
+		}
 	}
 }
 
 class Thruster extends Component {
 	constructor(o) {
 		super(o);
-		this.power = 40;
-		this.maxPower = 5;
+		this.power = 0;
+		this.maxPower = 0.1;
 	}
 
 	accelerate() {
-		this.power = 40;
+		this.power = 0.4;
 		return;
+
 		this.power++;
 		if (this.power > this.maxPower) {
 			this.power = this.maxPower;
@@ -150,6 +151,7 @@ class Turner extends Component {
 
 	turnLeft() {
 		this.ship.r -= this.rate;
+		console.log(this.ship.r);
 		if (this.ship.r < 0) {
 			this.ship.r += 360;
 		}
