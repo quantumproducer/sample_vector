@@ -228,8 +228,49 @@ class Game {
 
 }
 
-class Thing {
+class Component {
+	constructor(o) {
+		this.components = {};
+	}
+
+	install(name, c) {
+		this.components[name] = c;
+	}
+
+	grab(name) {
+		return this.components[name];
+	}
+
+	loop() {
+		
+	}
+
+	loopComponents() {
+		var keys = Object.keys(this.components);
+		for (let key of keys) {
+			var c = this.components[key];
+			this.components[key].loop();
+		}
+	}
+}
+
+class Inertia extends Component {
+	constructor(o) {
+		super(o);
+		this.mass = o['mass'];
+		this.theta = o['theta'];	
+		this.magnitude = o['magnitude'] ? o['magnitude'] : 0;
+	}
+
+	loop() {
+		//move the thing
+	}
+}
+
+class Thing extends Component {
 	constructor(options) {
+		super(options);
+		this.components = {};
 		if (options && options['position']) {
 			this.x = options['position'].x;
 			this.y = options['position'].y;
@@ -264,13 +305,6 @@ class Thing {
 		if (!o) {
 			return;
 		}
-		if (o['mx']) {
-			this.mx = o['mx'];
-		}
-
-		if (o['my'] || o['my' == 0]) {
-			this.my = o['my'];
-		}
 	}
 
 	speedMod() {
@@ -282,11 +316,11 @@ class Thing {
 	}
 
 	loop(dt) {
-		this.move(dt);
+
 	}	
 
 	afterLoop() {
-
+		this.loopComponents();
 	}
 
 	speed() {
@@ -297,5 +331,4 @@ class Thing {
 		return {'x' : this.x, 'y' : this.y};
 	}
 }
-
 

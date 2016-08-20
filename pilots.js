@@ -2,24 +2,29 @@
 
 class Ship extends Thing {
 	constructor(o) {
-
+		super(o);
 	}
 
 	init(o) {
-		this.controls = new ShipControls({'ship' : this});
+		this.r = 0;
+		var controls = new ShipControls({'ship' : this});
+		this.install('controls', controls);
+		var inertia = new Inertia({'mass' : 10, 'theta' : this.r, 'thing' : this});
+		this.install('inertia', inertia);
+		this.install('thruster', new Thruster({'ship' : this}));
+		this.install('turner', new Turner({'ship' : this}));
 	}
+
 }
 
-class ShipControls {
+class ShipControls extends Component {
 	constructor(o) {
+		super(o);
 		this.ship = o['ship'];
 
 		this.controlThruster = 0;
 		this.controlTurnLeft = 0;
 		this.controlTurnRight = 0;
-
-		this.thruster = new Thruster();
-		this.turner = new Turner();
 	}
 
 	parseGamepadInput(input) {
@@ -30,17 +35,18 @@ class ShipControls {
 
 	loop() {
 		if (this.controlThruster) {
-			this.thruster.accelerate();
+			this.ship.grab('thruster').accelerate();
 		} else {
-			this.thruster.deccelerate();
+			this.ship.grab('thruster').deccelerate();
 		}
-
-		applyThrust(this);	
+		
+		applyThrust(this.ship);	
 	}
 }
 
-class Thruster {
+class Thruster extends Component {
 	constructor(o) {
+		super(o);
 		this.power = 0;
 		this.maxPower = 10;
 	}
@@ -60,8 +66,9 @@ class Thruster {
 	}
 }
 
-class Turner {
+class Turner extends Component {
 	constructor(o) {
+		super(o);
 		this.ship = o['ship'];
 		this.rate = 6;
 	}

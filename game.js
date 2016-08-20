@@ -4,6 +4,9 @@ class ComboRockets extends Game {
 	setupPlayers() {
 		this.players = [];
 		var p = new Ship();
-		this.players.add(p);
+		p.x = 50;
+		p.y = 50;
+		this.players.push(p);
+		this.add('ships', p);
 	}
 }

@@ -140,11 +140,11 @@ rotate_point = function(pointX, pointY, originX, originY, angle) {
 applyThrust = function(thing) {
     var origin = {'x' : thing.x, 'y': thing.y};
     var tp = [thing.x, thing.y - 1];
-    var np = rotate_point(tp[0], tp[1], origin.x, origin.y, thing.r);
+    var np = rotate_point(tp[0], tp[1], origin.x, origin.y, thing.grab('inertia').theta);
     thing.mx = np.x - thing.x;
     thing.my = np.y - thing.y;
-    thing.x = thing.x + thing.mx * thing.thruster.power;
-    thing.y = thing.y + thing.my * thing.thruster.power;
+    thing.x = thing.x + thing.mx * thing.grab('thruster').power;
+    thing.y = thing.y + thing.my * thing.grab('thruster').power;
 }
 
 applyThrust2 = function(thing) {
