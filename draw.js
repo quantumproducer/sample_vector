@@ -1,5 +1,6 @@
 Thing.prototype.draw = function(client, context) {
 	context.fillStyle = 'blue';
+	context.beginPath();
 	context.arc(this.x, this.y, 30, 0, 2 * Math.PI, false);	
 	context.fill();
 };

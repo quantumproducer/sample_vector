@@ -9,7 +9,7 @@ class Ship extends Thing {
 		this.r = 0;
 		var controls = new ShipControls({'ship' : this});
 		this.install('controls', controls);
-		var inertia = new Inertia({'mass' : 10, 'theta' : this.r, 'thing' : this});
+		var inertia = new Inertia({'mass' : 10, 'theta' : 90, 'thing' : this});
 		this.install('inertia', inertia);
 		this.install('thruster', new Thruster({'ship' : this}));
 		this.install('turner', new Turner({'ship' : this}));
@@ -39,7 +39,15 @@ class ShipControls extends Component {
 		} else {
 			this.ship.grab('thruster').deccelerate();
 		}
-		
+
+		if (this.controlTurnLeft) {
+			this.ship.grab('turner').turnLeft();
+		}
+
+		if (this.controlTurnRight) {
+			this.ship.grab('turner').turnRight();
+		}
+
 		applyThrust(this.ship);	
 	}
 }
@@ -48,7 +56,7 @@ class Thruster extends Component {
 	constructor(o) {
 		super(o);
 		this.power = 0;
-		this.maxPower = 10;
+		this.maxPower = 5;
 	}
 
 	accelerate() {

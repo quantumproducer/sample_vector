@@ -188,10 +188,7 @@ class Client {
 					thing.draw(this, this.context());
 				}
 			}
-
 		}
-
-		
 	}
 
 	context() {

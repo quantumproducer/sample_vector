@@ -17,7 +17,7 @@ class Game {
 
 	parseGamepadInput(playerIndex, input) {
 		// this.players[playerIndex].handle('input', input);
-		this.players[playerIndex].controls.parseGamepadInput(input);
+		this.players[playerIndex].grab('controls').parseGamepadInput(input);
 	}
 
 	parseMusicSound(key_pressed_map, key_up_map) {
@@ -260,10 +260,19 @@ class Inertia extends Component {
 		this.mass = o['mass'];
 		this.theta = o['theta'];	
 		this.magnitude = o['magnitude'] ? o['magnitude'] : 0;
+		this.thing = o['thing'];
 	}
 
 	loop() {
-		//move the thing
+		var thing = this.thing;
+		var origin = {'x' : thing.x, 'y': thing.y};
+    var tp = [thing.x, thing.y - 1];
+    var np = rotate_point(tp[0], tp[1], origin.x, origin.y, this.theta);
+    thing.mx = np.x - thing.x;
+    thing.my = np.y - thing.y;
+    var p = this.magnitude;
+    thing.x = thing.x + thing.mx * p;
+    thing.y = thing.y + thing.my * p;
 	}
 }
 
